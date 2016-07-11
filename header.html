@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!-- Loading Bootstrap -->
+    <link href="dist/css/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Loading Flat UI -->
+    <link href="dist/css/flat-ui.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="dist/css/header.css">
+
+</head>
+<body>
+<nav id="common-header" class="navbar navbar-default" role="navigation">
+    <!-- common head template -->
+<div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
+        <span class="sr-only">Toggle navigation</span>
+    </button>
+    <a class="navbar-brand">迟到管理系统</a>
+</div>
+<div class="collapse navbar-collapse" id="navbar-collapse-01">
+    <ul class="nav navbar-nav navbar-left">
+        <li id="tab1"><a href="assembly.html" onclick="">会议记录</a></li>
+        <li id="tab2"><a href="late.html" onclick="">迟到记录</a></li>
+        <li id="tab3"><a href="meal.html" onclick="">订餐记录</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+        <li>
+            <a><span data-toggle="modal" data-target="#navSetting" class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
+        </li>
+        <li id="tab4"><a href="login.html" onclick="">登录</a></li>
+        <li id="tab5"><a href="register.html" onclick="">注册</a></li>
+    </ul>
+    <form id="search-bar" class="navbar-form navbar-right" action="#" role="search" hidden="" style="display: block;">
+        <div class="form-group">
+            <div id="the-basics">
+                <span class="twitter-typeahead" style="position: relative; display: inline-block;">
+                    <input class="form-control typeahead tt-hint" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" dir="ltr" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background-attachment: scroll; background-clip: border-box; background-color: rgb(255, 255, 255); background-image: none; background-origin: padding-box; background-size: auto; background-position: 0% 0%; background-repeat: repeat repeat;"><input class="form-control typeahead tt-input" type="text" placeholder="搜索" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: Lato, Helvetica, Arial, sans-serif; font-size: 15px; font-style: normal; font-variant-ligatures: normal; font-variant-position: normal; font-variant-caps: normal; font-variant-numeric: normal; font-variant-alternates: normal; font-variant-east-asian: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><div class="tt-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none;"><div class="tt-dataset tt-dataset-courses"><div onclick="javascript:showCourseDetail('PTSS110005.01');" class="tt-suggestion tt-selectable"><strong>应用伦理学</strong> <br>  PTSS110005.01 陈金华</div><div onclick="javascript:showCourseDetail('PTSS110005.02');" class="tt-suggestion tt-selectable"><strong>应用伦理学</strong> <br>  PTSS110005.02 瞿晓敏</div><div onclick="javascript:showCourseDetail('PTSS110005.03');" class="tt-suggestion tt-selectable"><strong>应用伦理学</strong> <br>  PTSS110005.03 瞿晓敏</div><div onclick="javascript:showCourseDetail('PTSS110005.04');" class="tt-suggestion tt-selectable"><strong>应用伦理学</strong> <br>  PTSS110005.04 刘学礼</div><div onclick="javascript:showCourseDetail('PTSS110005.05');" class="tt-suggestion tt-selectable"><strong>应用伦理学</strong> <br>  PTSS110005.05 刘学礼</div></div></div></span>
+		  <span class="input-group-btn">
+			<!--button type="submit" class="btn"><span class="fui-search"></span></button-->
+		  </span>
+            </div>
+        </div>
+    </form>
+</div>
+</nav>
+</body>
+</html>
