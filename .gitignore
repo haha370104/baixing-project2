@@ -1,0 +1,10 @@
+
+*.iml
+
+*.xml
+
+*.pyc
+
+.idea/.name
+
+secret_config.py
