@@ -9,6 +9,7 @@ def wechat_server():
     print(request.url)
     if check_signature('token', request.args.get('timestamp'), request.args.get('nonce'),
                        request.args.get('signature')):
-        return request.args.get('echostr')
+        print(request.values.get('FromUserName'))
+        return 'success'
     else:
         return request.url
