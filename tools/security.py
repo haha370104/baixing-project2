@@ -18,7 +18,7 @@ def check_signature(token, time, nonce, signature):
     tmp_arr = [token, time, nonce]
     tmp_arr.sort()
     tmp = ''.join(tmp_arr)
-    sign = hashlib.sha1(tmp).hexdigest()
+    sign = hashlib.sha1(tmp).encode().hexdigest()
     if sign == signature:
         return True
     else:
