@@ -1,0 +1,21 @@
+html {
+    font-family: "微软雅黑 Light";
+}
+
+ul {
+    font-family: "微软雅黑 Light";
+}
+
+input {
+    font-family: "微软雅黑 Light";
+}
+
+table {
+    font-family: "微软雅黑 Light";
+}
+
+#nav {
+    height: 100%;
+    width: 200px;
+    background-color: bisque;
+}
