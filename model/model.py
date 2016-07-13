@@ -58,7 +58,12 @@ class fine(Base):
         dic = {}
         dic['ID'] = self.ID
         dic['text'] = str(self.happen_time) + '的会议中迟到,罚款' + str(float(self.amount)) + '元'
+        dic['pay_flag'] = self.pay_flag
         return dic
+
+    def check(self):
+        self.pay_flag = True
+        self.pay_time = datetime.datetime.now()
 
 
 class meeting(Base):
@@ -81,7 +86,7 @@ class meeting(Base):
             start = self.start_time.timetuple()
             end = self.end_time.timetuple()
             seconds = (end.tm_hour - start.tm_hour) * 3600 + (end.tm_min - start.tm_min) * 60 + (
-            end.tm_sec - start.tm_sec)
+                end.tm_sec - start.tm_sec)
             self.ticket = wechat_tools.get_ticket(seconds, self.screen_ID)  # 需要调试
             db.session.commit()
             return self.ticket

@@ -114,6 +114,30 @@ def show_fine():
     return render_template('pun_show.html')
 
 
+@wechat_bp.route('/show_fine_list/')
+def show_fine_list():
+    code = request.values.get('code')
+    open_ID = wechat_tools.get_openID_by_code(code)
+    staff = user.query.filter_by(wechat_ID=open_ID).first()
+    puns = fine.query.filter(and_(fine.user_ID == staff.ID, not_(fine.pay_flag))).all()
+    result = []
+    for pun in puns:
+        result.append(pun.wechat_ajax())
+    return json.dumps(result)
+
+
+@wechat_bp.route('/confirm_fine/', methods=['POST', 'GET'])
+def confirm_fine():
+    data = request.values.get('fine_list')
+    fine_list = json.loads(data)
+    for fine_ID in fine_list:
+        f = fine.query.get(fine_ID)
+        print(f.amount)
+        f.check()
+    db.session.commit()
+    return '成功'
+
+
 @wechat_bp.route('/')
 def ind():
     return '121231231233'

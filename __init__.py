@@ -3,7 +3,7 @@ from controller import blue_prints
 from model.model import *
 from sqlalchemy import and_, or_
 import datetime
-from flask import render_template
+from flask import render_template, request
 
 for bp in blue_prints:
     app.register_blueprint(bp[0], url_prefix=bp[1])
@@ -42,9 +42,11 @@ def get_meeting_QR(meeting_ID):
 
 @app.route('/get_signin_list/<int:meeting_ID>/')
 def get_signin_list(meeting_ID):
+    flag = (request.values.get('flag') == '1')
+
     historys = signin_history.query.filter(and_(signin_history.happen_date == datetime.datetime.now().date(),
                                                 signin_history.meeting_ID == meeting_ID,
-                                                signin_history.delete_flag)).all()
+                                                signin_history.delete_flag == flag)).all()
     result = []
     for history in historys:
         result.append(history.to_json())

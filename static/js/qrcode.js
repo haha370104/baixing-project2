@@ -1,6 +1,5 @@
 $(document).ready(function () {
-    getrecord ();
-    setInterval(showparticipant, 5000);
+    getrecord();
 });
 
 var people = 0;
@@ -10,7 +9,7 @@ function showparticipant() {
     var meeting_ID = url_list.pop();
     $.ajax({
         type: "GET",
-        url: "/get_signin_list/" + meeting_ID + '/',
+        url: "/get_signin_list/" + meeting_ID + '/?flag=1',
         dataType: "json",
         success: function (msg) {
             if (msg.length != 0) {
@@ -33,11 +32,13 @@ function showparticipant() {
     });
 }
 
-function getrecord ()
-{
+function getrecord() {
+    var url_list = location.href.split('/');
+    url_list.pop();
+    var meeting_ID = url_list.pop();
     $.ajax({
         type: "GET",
-        url: "/get_signin_list/" + meeting_ID + '/',
+        url: "/get_signin_list/" + meeting_ID + '/?flag=0',
         dataType: "json",
         success: function (msg) {
             if (msg.length != 0) {
@@ -56,6 +57,9 @@ function getrecord ()
                         e.name + "</button>");
                 }
             });
+            setInterval(showparticipant, 5000);
+        }, error: function () {
+            alert("error");
         }
     });
 }
