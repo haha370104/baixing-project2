@@ -1,4 +1,4 @@
-<form class="col-sm-6 form-horizontal" action="">
+<form class="col-sm-6 col-sm-offset-3 form-horizontal" action="">
     <div class="form-group">
         <label class="col-xs-3 control-label" for="meeting_name">会议名</label>
         <div class="col-xs-9">
@@ -10,7 +10,6 @@
         <div class="col-xs-9">
             <input class="form-control" id="meeting_date" name="meeting_date" type="date">
         </div>
-    </div>
     </div>
     <div class="form-group">
         <label class="col-xs-3 control-label" for="start_time">开始时间</label>
@@ -35,7 +34,13 @@
     </div>
     <div class="form-group">
         <div class="col-xs-9 col-xs-offset-3">
-            <input class="btn btn-primary form-control" id="submit" name="submit" type="submit">
+            <input id="confirmbutton" type="button" class="btn btn-sm btn-primary" style="width: 100%;font-size: large;background-color: #1bc5a3;" value="提    交"/>
         </div>
     </div>
 </form>
+<style type="text/css">
+    #confirmbutton:hover
+    {
+        background-color: white;
+    }
+</style>
