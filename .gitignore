@@ -8,3 +8,5 @@
 .idea/.name
 
 secret_config.py
+
+tools/send_email_script.py

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>WeUI</title>
+    <link rel="stylesheet" href="/static/css/weui.css"/>
+</head>
+<body>
+<div class="container" id="container"></div>
+<div class="hd">
+    <h1 class="page_title" style="text-align:center">未交罚款</h1>
+    <div class="weui_cells_title">请确认已交罚款</div>
+    <div id="checkbox" class="weui_cells weui_cells_checkbox">
+    </div>
+</div>
+
+<div class="weui_cells_tips">在确认付款的记录前点击</div>
+<div class="weui_btn_area">
+    <a class="weui_btn weui_btn_primary" id="showTooltips" onclick="make();">确定</a>
+</div>
+</body>
+<script src="/static/js/jquery-3.0.0.min.js"></script>
+<script>
+
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]);
+        return null; //返回参数值
+    }
+    var count = 0;
+
+    $(document).ready(function () {
+        var code = getUrlParam('code');
+        $.ajax({
+            type: "GET",
+            url: "/wechat/show_fine_list/?code=" + code,
+            cache: false,
+            dataType: 'json',
+            success: function (msg) {
+                var tablehtml = '';
+                count = msg.length;
+                msg.forEach(function (e) {
+                    tablehtml += '<label class="weui_cell weui_check_label" for="' + "cb" + e.ID + '">';
+                    tablehtml += '<div class="weui_cell_hd"><input type="checkbox" class="weui_check" name="checkbox1" id="'
+                            + "cb" + e.ID + '"><i class="weui_icon_checked"></i></div><div class="weui_cell_bd weui_cell_primary">';
+                    tablehtml += '<p>' + e.text + '</p>';
+                    tablehtml += '</div></label>';
+                });
+                $('#checkbox').html(tablehtml);
+
+            },
+            error: function () {
+                //alert("error");
+            }
+        });
+        //alert('卧槽!')
+    });
+
+
+    function make() {
+        var result = [];
+
+        var fine_list = document.getElementsByClassName('weui_check');
+        for (var i = 0; i < fine_list.length; i++) {
+            if (fine_list[i].checked) {
+                var id = fine_list[i].id.split('cb')[1];
+                result.push(id);
+            }
+        }
+        $.post('/wechat/confirm_fine/', {'fine_list': JSON.stringify(result)}, function (data, status) {
+            if (status == 'success') {
+                alert(data);
+                WeixinJSBridge.invoke('closeWindow', {}, function (res) {
+                });
+            }
+        })
+    }
+
+
+</script>
+</html>

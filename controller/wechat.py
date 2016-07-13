@@ -34,14 +34,13 @@ def handle_scan(json, wechat_ID):
                 db.session.commit()
             else:
                 minutes = (now.hour - start_time.hour) * 60 + (now.minute - start_time.minute)
-                print(minutes)
                 amount = 0
                 if meet.pun_type == 0:
                     amount = float(meet.pun_rule) * max(minutes, 1)
                 elif meet.pun_type == 1:
                     amount = float(meet.pun_rule)
                 else:
-                    pass  # TODO
+                    amount = eval(meet.pun_config)  # TODO
                 xml = wechat_tools.get_reply_xml(json['xml']['FromUserName'], json['xml']['ToUserName'],
                                                  '大兄弟快交钱,{0}元'.format(str(amount)))
 
@@ -81,7 +80,7 @@ def wechat_server():
 def pre_register():
     code = request.values.get('code')
     open_ID = wechat_tools.get_openID_by_code(code)
-    return render_template('register.html', open_ID=open_ID)
+    return render_template('wechat/register.html', open_ID=open_ID)
 
 
 @wechat_bp.route('/check_register/', methods=['GET', 'POST'])
@@ -111,7 +110,31 @@ def get_fines():
 
 @wechat_bp.route('/show_fine/')
 def show_fine():
-    return render_template('pun_show.html')
+    return render_template('wechat/pun_show.html')
+
+
+@wechat_bp.route('/show_fine_list/')
+def show_fine_list():
+    code = request.values.get('code')
+    open_ID = wechat_tools.get_openID_by_code(code)
+    staff = user.query.filter_by(wechat_ID=open_ID).first()
+    puns = fine.query.filter(and_(fine.user_ID == staff.ID, not_(fine.pay_flag))).all()
+    result = []
+    for pun in puns:
+        result.append(pun.wechat_ajax())
+    return json.dumps(result)
+
+
+@wechat_bp.route('/confirm_fine/', methods=['POST', 'GET'])
+def confirm_fine():
+    data = request.values.get('fine_list')
+    fine_list = json.loads(data)
+    for fine_ID in fine_list:
+        f = fine.query.get(fine_ID)
+        print(f.amount)
+        f.check()
+    db.session.commit()
+    return '成功'
 
 
 @wechat_bp.route('/')

@@ -58,7 +58,12 @@ class fine(Base):
         dic = {}
         dic['ID'] = self.ID
         dic['text'] = str(self.happen_time) + '的会议中迟到,罚款' + str(float(self.amount)) + '元'
+        dic['pay_flag'] = self.pay_flag
         return dic
+
+    def check(self):
+        self.pay_flag = True
+        self.pay_time = datetime.datetime.now()
 
 
 class meeting(Base):
@@ -74,14 +79,38 @@ class meeting(Base):
     ticket = db.Column(db.String(100))
     screen_ID = db.Column(db.Integer, unique=True)
 
+    def __init__(self, routing_flag, start_time, end_time, pun_rule, pun_type, pun_config=None):
+        self.routing_flag = routing_flag
+        if routing_flag:
+            self.start_time = datetime.datetime(1900, 1, 1, start_time.hour, start_time.minute, start_time.second)
+            self.end_time = datetime.datetime(1900, 1, 1, end_time.hour, end_time.minute, end_time.second)
+        else:
+            self.start_time = start_time
+            self.end_time = end_time
+        self.pun_rule = pun_rule
+        self.pun_type = pun_type
+        self.pun_config = pun_config
+
+    def check_legal(self):
+        if self.routing_flag:
+            end = self.get_end_time()
+            now = datetime.datetime.now().time()
+            return end >= now
+        else:
+            now = datetime.datetime.now()
+            return self.end_time >= now
+        pass
+
     def get_ticket(self):
+        if self.screen_ID == None:
+            self.screen_ID = self.ID + 10000
         if wechat_tools.check_ticket(self.ticket):
             return self.ticket
         else:
-            start = self.start_time.timetuple()
+            start = datetime.datetime.now()
             end = self.end_time.timetuple()
-            seconds = (end.tm_hour - start.tm_hour) * 3600 + (end.tm_min - start.tm_min) * 60 + (
-            end.tm_sec - start.tm_sec)
+            seconds = (end.tm_hour - start.hour) * 3600 + (end.tm_min - start.minute) * 60 + (
+                end.tm_sec - start.second)
             self.ticket = wechat_tools.get_ticket(seconds, self.screen_ID)  # 需要调试
             db.session.commit()
             return self.ticket
@@ -109,6 +138,11 @@ class meeting(Base):
         start_time = str(self.start_time).split(' ')[1]
         start_time = datetime.datetime.strptime(start_time, '%H:%M:%S').time()
         return start_time
+
+    def get_end_time(self):
+        end_time = str(self.end_time).split(' ')[1]
+        end_time = datetime.datetime.strptime(end_time, '%H:%M:%S').time()
+        return end_time
 
 
 t_meeting_user = db.Table('t_meeting_user',

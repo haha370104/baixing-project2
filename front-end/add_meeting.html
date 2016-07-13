@@ -1,3 +1,4 @@
+<script src="js/vendor/jquery.min.js"></script>
 <form class="col-sm-6 col-sm-offset-3 form-horizontal" action="">
     <div class="form-group">
         <label class="col-xs-3 control-label" for="meeting_name">会议名</label>
@@ -27,11 +28,41 @@
         <label class="col-xs-3 control-label" for="meeting_type">会议类型</label>
         <div class="col-xs-9">
             <select class="form-control" name="meeting_type" id="meeting_type">
-                <option class="form-control" value="0">非常规</option>
-                <option class="form-control" value="1">常规</option>
+                <option value="0">非常规</option>
+                <option value="1">常规</option>
             </select>
         </div>
     </div>
+    <div class="form-group">
+        <label class="col-xs-3 control-label" for="punish_type">惩罚方式 </label>
+        <div class="col-xs-9">
+            <select class="form-control" name="punish_type" id="punish_type">
+                <option value="0">定额罚款</option>
+                <option value="1">时间就是金钱</option>
+                <option value="2">自己来决定</option>
+            </select>
+        </div>
+    </div>
+    <div  class="form-group">
+        <label class="col-xs-3 control-label" for="fixed_money">罚款金额</label>
+        <div class="col-xs-9">
+            <input class="form-control" id="fixed_money" name="fixed_money" type="text" placeholder="大侠饶命">
+        </div>
+    </div>
+    <div  class="form-group">
+        <label class="col-xs-3 control-label" for="active_money">罚款金额</label>
+        <div class="col-xs-7">
+            <input class="form-control" id="active_money" name="fixed_money" type="text" placeholder="手下留情">
+        </div>
+        <label class="col-xs-2 control-label text-left">元/分钟</label>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-3 control-label" for="self_design">我来设计</label>
+        <div class="col-xs-9">
+            <textarea class="form-control" name="self_design" id="self_design" cols="30" rows="7"></textarea>
+        </div>
+    </div>
+
     <div class="form-group">
         <div class="col-xs-9 col-xs-offset-3">
             <input id="confirmbutton" type="button" class="btn btn-sm btn-primary" style="width: 100%;font-size: large;background-color: #1bc5a3;" value="提    交"/>
@@ -44,3 +75,4 @@
         background-color: white;
     }
 </style>
+
