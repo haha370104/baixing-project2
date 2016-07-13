@@ -34,14 +34,13 @@ def handle_scan(json, wechat_ID):
                 db.session.commit()
             else:
                 minutes = (now.hour - start_time.hour) * 60 + (now.minute - start_time.minute)
-                print(minutes)
                 amount = 0
                 if meet.pun_type == 0:
                     amount = float(meet.pun_rule) * max(minutes, 1)
                 elif meet.pun_type == 1:
                     amount = float(meet.pun_rule)
                 else:
-                    pass  # TODO
+                    amount = eval(meet.pun_config)  # TODO
                 xml = wechat_tools.get_reply_xml(json['xml']['FromUserName'], json['xml']['ToUserName'],
                                                  '大兄弟快交钱,{0}元'.format(str(amount)))
 

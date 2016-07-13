@@ -2,7 +2,7 @@ import smtplib
 from email.mime.text import MIMEText
 
 
-class email:
+class email_class:
     _user = ""
     _pwd = ""
     _to = ""
@@ -23,12 +23,7 @@ class email:
         msg['Subject'] = title
         msg['TO'] = to
         msg['From'] = self._user
-        self.s.sendmail(self._user, self._to, msg.as_string(()))
+        self.s.sendmail(self._user, to, msg.as_string(()))
 
     def quit(self):
         self.s.close()
-
-
-if __name__ == '__main__':
-    e = email('luoxiangyu@baixing.com', 'ttkl1231+1s', 'smtp.partner.outlook.cn')
-    e.send_email('haha370104@gmail.com', 'heiheihei', 'content')
