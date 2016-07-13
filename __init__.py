@@ -29,7 +29,7 @@ def get_meeting_list():
 
 @app.route('/show_meeting/')
 def show_meeting():
-    return render_template('assembly.html')
+    return render_template('wechat/assembly.html')
 
 
 @app.route('/get_QR_image/<int:meeting_ID>/')
@@ -38,7 +38,7 @@ def get_meeting_QR(meeting_ID):
     if m.check_legal():
         ticket = m.get_ticket()
         image_url = wechat_tools.get_QR_url(ticket)
-        return render_template('qrcode.html', image_url=image_url)
+        return render_template('wechat/qrcode.html', image_url=image_url)
     else:
         return redirect(url_for('show_meeting'))
 
