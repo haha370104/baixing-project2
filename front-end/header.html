@@ -27,7 +27,7 @@
         <li class="" id="tab1"><a href="#" id="assembly">会议记录</a></li>
         <li class="" id="tab2"><a href="#" id="late">迟到记录</a></li>
         <li class="" id="tab3"><a href="#" id="booking">订餐记录</a></li>
-        <li class="" id="tab4"><a href="#" id="add_meeting">添加会议</a></li>
+        <!--li class="" id="tab4"><a href="#" id="add_meeting">添加会议</a></li>-->
         </ul>
         <!--
         <ul class="nav navbar-nav navbar-right">
@@ -46,7 +46,7 @@
         <span class="twitter-typeahead" style="position: relative; display: inline-block;">
         <input class="form-control typeahead tt-hint" type="text" readonly="" autocomplete="off"
     spellcheck="false" tabindex="-1" dir="ltr"
-    style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background-attachment: scroll; background-clip: border-box; background-color: rgb(255, 255, 255); background-image: none; background-origin: padding-box; background-size: auto; background-position: 0% 0%; background-repeat: repeat repeat;">
+    style="position: absolute; top: 0; left: 0; border-color: transparent; box-shadow: none; opacity: 1; background-attachment: scroll; background-clip: border-box; background-color: rgb(255, 255, 255); background-image: none; background-origin: padding-box; background-size: auto; background-position: 0% 0%; background-repeat: repeat repeat;">
         <input id="search" class="form-control typeahead tt-input" type="text" placeholder="搜索" autocomplete="off"
     spellcheck="false" dir="auto"
     style="position: relative; vertical-align: top; background-color: transparent;">
@@ -59,18 +59,18 @@
         </div>
         </nav>
         <div id="main" class="container-fluid">
-
+            <a href="#" id="add_meeting"><input type="button" class="btn btn-sm btn-success" style="width: 10%;font-size: large;float:right;" value="新增会议" /> </a>
         </div>
         </body>
         </html>
 
-        <script src="js/vendor/jquery.min.js"></script>
+<script src="js/vendor/jquery.min.js"></script>
 <script src="js/vendor/respond.min.js"></script>
 <script src="js/flat-ui.min.js"></script>
 <script>
     $(document).ready(function () {
         $("#assembly").trigger("click");
-    })
+    });
     $("#assembly").click(function () {
         $("#assembly").parent().addClass("active");
         $("#late").parent().removeClass("active");
@@ -83,7 +83,7 @@
             var head_en = ["meeting_id", "meeting_name", "meeting_time", "meeting_creator"];
             show(head, head_en, result);
         })
-    })
+    });
 
     $("#late").click(function () {
         $("#assembly").parent().removeClass("active");
@@ -97,7 +97,7 @@
             var head_en = ["name", "meeting_time", "arrive_time", "meeting_name", "meeting_id"];
             show(head, head_en, result);
         })
-    })
+    });
 
     $("#booking").click(function () {
         $("#assembly").parent().removeClass("active");
@@ -111,7 +111,7 @@
             var head_en = ["meeting_creator", "date", "money"];
             show(head, head_en, result);
         })
-    })
+    });
 
     $("#add_meeting").click(function () {
         $("#assembly").parent().removeClass("active");
@@ -126,11 +126,12 @@
                 $("#main").append(msg);
             }
         })
-    })
+    });
 
 
     function tableClear() {
         $("#main").empty();
+        $("#main").append('<a href="#" id="add_meeting"><input type="button" class="btn btn-sm btn-success" style="width: 10%;font-size: large;float:right;" value="新增会议" /> </a>');
         $("#main").append("<table id=\'table\' class=\'table table-striped\'></table>");
         $("table").append("<thead><tr></tr></thead><tbody></tbody>");
     }
@@ -157,6 +158,6 @@
             if ($(this).text().search(str)>=0)
                 $(this).parent().show() ;
         }) ;
-    })
+    });
 
 </script>
