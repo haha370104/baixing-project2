@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>WeUI</title>
+    <link rel="stylesheet" href="/static/css/weui.css"/>
+</head>
+<body>
+<div class="container" id="container"></div>
+<div class="hd">
+    <h1 class="page_title" style="text-align:center">注册</h1>
+    <div class="weui_cells weui_cells_form">
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label">真实姓名</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" id="username" type="text" placeholder="请输入真实姓名"/>
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label">手机号</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" id="phone" type="number" pattern="[0-9]{11}" placeholder="请输入手机号"/>
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label">邮箱</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="email" id="email" placeholder="请输入邮箱"/>
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label">密码</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="password" id="password" placeholder="请输入登录密码"/>
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label">确认密码</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="password" id="re-password" placeholder="请在此输入密码"/>
+            </div>
+        </div>
+    </div>
+    <div class="weui_cells_tips">底部说明文字底部说明文字</div>
+    <a id="open_ID" style="display: none">{{ open_ID }}</a>
+    <div class="weui_btn_area">
+        <a class="weui_btn weui_btn_primary" href="javascript:" id="showTooltips" onclick="sub()">确定</a>
+    </div>
+</div>
+
+</body>
+<script src="/static/js/jquery-3.0.0.min.js"></script>
+<script>
+    var open_ID = $('#open_ID').text();
+    function sub() {
+        if ($('#password').val() == $('#re-password').val()) {
+            var data = {
+                'phone': $('#phone').val(),
+                'username': $('#username').val(),
+                'email': $('#email').val(),
+                'password': $('#password').val(),
+                'open_ID': open_ID
+            };
+            $.post('/wechat/check_register/?open_ID=' + open_ID, data, function (data) {
+                if (data == 'success') {
+                    alert('注册成功!');
+                    WeixinJSBridge.invoke('closeWindow', {}, function (res) {
+                    });
+                }
+            })
+        } else {
+            alert('两次输入密码不一致!');
+        }
+    }
+</script>
+
+</html>

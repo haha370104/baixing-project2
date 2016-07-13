@@ -1,4 +1,7 @@
 from app_config import db
+from tools.wechat_tools import *
+from tools.security import *
+import datetime
 
 Base = db.Model
 
@@ -34,7 +37,28 @@ class fine(Base):
     amount = db.Column(db.DECIMAL(5, 2), nullable=False)
     happen_time = db.Column(db.DateTime, nullable=False)
     pay_flag = db.Column(db.Boolean, nullable=False)
-    pay_time = db.Column(db.DateTime, nullable=False)
+    pay_time = db.Column(db.DateTime)
+
+    def __init__(self, user_ID, meeting_ID, amount):
+        self.user_ID = user_ID
+        self.meeting_ID = meeting_ID
+        self.amount = amount
+        self.happen_time = datetime.datetime.now()
+        self.pay_flag = False
+
+    def to_json(self):
+        dic = {}
+        dic['ID'] = self.ID
+        dic['meeting_ID'] = self.meeting_ID
+        dic['amount'] = float(self.amount)
+        dic['happen_time'] = str(self.happen_time)
+        return dic
+
+    def wechat_ajax(self):
+        dic = {}
+        dic['ID'] = self.ID
+        dic['text'] = str(self.happen_time) + '的会议中迟到,罚款' + str(float(self.amount)) + '元'
+        return dic
 
 
 class meeting(Base):
@@ -42,11 +66,49 @@ class meeting(Base):
 
     ID = db.Column(db.Integer, primary_key=True)
     routing_flag = db.Column(db.Boolean, nullable=False, default=False)
-    start_time = db.Column(db.DateTime, nullable=False)
-    end_time = db.Column(db.DateTime, nullable=False)
+    start_time = db.Column('start_time', db.DateTime, nullable=False)
+    end_time = db.Column('end_time', db.DateTime, nullable=False)
     pun_rule = db.Column(db.Numeric(5, 2), nullable=False)
     pun_type = db.Column(db.Integer, nullable=False, default=0)
     pun_config = db.Column(db.String(300))
+    ticket = db.Column(db.String(100))
+    screen_ID = db.Column(db.Integer, unique=True)
+
+    def get_ticket(self):
+        if wechat_tools.check_ticket(self.ticket):
+            return self.ticket
+        else:
+            start = self.start_time.timetuple()
+            end = self.end_time.timetuple()
+            seconds = (end.tm_hour - start.tm_hour) * 3600 + (end.tm_min - start.tm_min) * 60 + (
+            end.tm_sec - start.tm_sec)
+            self.ticket = wechat_tools.get_ticket(seconds, self.screen_ID)  # 需要调试
+            db.session.commit()
+            return self.ticket
+
+    def to_json(self):
+        dic = {}
+        dic['ID'] = self.ID
+        dic['routing_flag'] = self.routing_flag
+        dic['start_time'] = str(self.start_time)
+        dic['end_time'] = str(self.end_time)
+        dic['pun_rule'] = str(float(self.pun_rule))
+        dic['pun_type'] = self.pun_type
+        dic['pun_config'] = self.pun_config
+        dic['ticket'] = self.get_ticket()
+        dic['screen_ID'] = self.screen_ID
+        if self.routing_flag:
+            start_time = dic['start_time'].split(' ')[1]
+            end_time = dic['end_time'].split(' ')[1]
+            dic['text'] = '常规会议\n开始时间:{0}\n,结束时间:{1}'.format(start_time, end_time)
+        else:
+            dic['text'] = '非常规会议\n开始时间:{0}\n,结束时间:{1}'.format(dic['start_time'], dic['end_time'])
+        return dic
+
+    def get_start_time(self):
+        start_time = str(self.start_time).split(' ')[1]
+        start_time = datetime.datetime.strptime(start_time, '%H:%M:%S').time()
+        return start_time
 
 
 t_meeting_user = db.Table('t_meeting_user',
@@ -74,3 +136,47 @@ class user(Base):
     salt = db.Column(db.String(16), nullable=False)
     passwd = db.Column(db.String(32), nullable=False)
     token = db.Column(db.String(16))
+
+    def __init__(self, user_name, email, wechat_ID, phone, passwd):
+        self.user_name = user_name
+        self.email = email
+        self.wechat_ID = wechat_ID
+        self.phone = phone
+        self.salt = get_salt(16)
+        self.passwd = md5(passwd + self.salt)
+
+    def check_pwd(self, passwd):
+        if self.passwd == md5(passwd + self.salt):
+            self.token = get_salt(16)
+            db.session.commit()
+            return True
+        else:
+            return False
+
+
+class signin_history(Base):
+    __tablename__ = 'signin_history'
+
+    ID = db.Column(db.Integer, primary_key=True)
+    sign_time = db.Column(db.Time, nullable=False)
+    happen_date = db.Column(db.Date, nullable=False)
+    user_ID = db.Column(db.Integer, nullable=False, index=True)
+    meeting_ID = db.Column(db.Integer, nullable=False, index=True)
+    late_flag = db.Column(db.Boolean, nullable=False)
+    delete_flag = db.Column(db.Boolean, default=True)
+
+    def __init__(self, user_ID, meeting_ID, late_flag):
+        self.user_ID = user_ID
+        self.meeting_ID = meeting_ID
+        self.sign_time = datetime.datetime.now().time()
+        self.happen_date = datetime.datetime.now().date()
+        self.late_flag = late_flag
+
+    def to_json(self):
+        dic = {}
+        dic['name'] = user.query.get(self.user_ID).user_name
+        dic['flag'] = self.late_flag
+        return dic
+
+    def delete(self):
+        self.delete_flag = False

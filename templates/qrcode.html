@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>扫码签到</title>
+    <link rel="stylesheet" href="/static/css/weui.css"/>
+    <!-- Loading Bootstrap -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Loading Flat UI -->
+    <link href="/static/css/flat-ui.css" rel="stylesheet">
+    <!--
+    <link rel="shortcut icon" href="https://res.wx.qq.com/zh_CN/htmledition/v2/images/favicon2e4e03.ico" type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/zh_CN/htmledition/v2/css/base/base2e4e03.css">
+    -->
+</head>
+
+<body background="/static/image/WeChat_1468375900.png">
+<style type="text/css">
+    .btn {
+        margin-bottom: 10px;
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    #maindiv {
+        width: 500px;
+        height: 600px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        overflow: auto;
+        margin: -300px 0 0 -250px;
+        padding-left: 40px;
+        padding-right: 40px;
+        border-radius: 5px;
+        background: white;
+    }
+</style>
+<canvas style="position:absolute;top:0;left:0;bottom:0;right:0;z-index:-1;width:100%;height:100%;"
+        id="heroCanvas"></canvas>
+<div class="logo">
+    <i class="web_wechat_login_logo"></i>
+</div>
+<div id="maindiv" class="login_box">
+    <div class="qrcode">
+        <img class="img" src="{{ image_url }}" height="400px" width="400px" style="vertical-align:middle;">
+    </div>
+    <br>
+    <div>
+        <p id="count-people" style="text-align: center;font-family: 'Microsoft YaHei',serif;">已有 <strong>0</strong>
+            人加入会议</p>
+    </div>
+    <div id="ntable">
+
+    </div>
+</div>
+<script src="/static/js/jquery-3.0.0.min.js"></script>
+<script src="/static/js/qrcode.js"></script>
+</body>
+</html>
