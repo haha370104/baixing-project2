@@ -80,7 +80,8 @@ class meeting(Base):
         else:
             start = self.start_time.timetuple()
             end = self.end_time.timetuple()
-            seconds=(end.tm_hour-start.tm_hour)*3600+(end.tm_min-start.tm_min)*60+(end.tm_sec-start.tm_sec)
+            seconds = (end.tm_hour - start.tm_hour) * 3600 + (end.tm_min - start.tm_min) * 60 + (
+            end.tm_sec - start.tm_sec)
             self.ticket = wechat_tools.get_ticket(seconds, self.screen_ID)  # 需要调试
             db.session.commit()
             return self.ticket
@@ -162,6 +163,7 @@ class signin_history(Base):
     user_ID = db.Column(db.Integer, nullable=False, index=True)
     meeting_ID = db.Column(db.Integer, nullable=False, index=True)
     late_flag = db.Column(db.Boolean, nullable=False)
+    delete_flag = db.Column(db.Boolean, default=True)
 
     def __init__(self, user_ID, meeting_ID, late_flag):
         self.user_ID = user_ID
@@ -175,3 +177,6 @@ class signin_history(Base):
         dic['name'] = user.query.get(self.user_ID).user_name
         dic['flag'] = self.late_flag
         return dic
+
+    def delete(self):
+        self.delete_flag = False

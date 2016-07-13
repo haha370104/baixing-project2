@@ -43,11 +43,12 @@ def get_meeting_QR(meeting_ID):
 @app.route('/get_signin_list/<int:meeting_ID>/')
 def get_signin_list(meeting_ID):
     historys = signin_history.query.filter(and_(signin_history.happen_date == datetime.datetime.now().date(),
-                                                signin_history.meeting_ID == meeting_ID)).all()
+                                                signin_history.meeting_ID == meeting_ID,
+                                                signin_history.delete_flag)).all()
     result = []
     for history in historys:
         result.append(history.to_json())
-        db.session.delete(history)
+        history.delete()
     db.session.commit()
     return json.dumps(result)
 

@@ -81,7 +81,7 @@ def wechat_server():
 def pre_register():
     code = request.values.get('code')
     open_ID = wechat_tools.get_openID_by_code(code)
-    return render_template('weui.html', open_ID=open_ID)
+    return render_template('register.html', open_ID=open_ID)
 
 
 @wechat_bp.route('/check_register/', methods=['GET', 'POST'])
@@ -111,7 +111,7 @@ def get_fines():
 
 @wechat_bp.route('/show_fine/')
 def show_fine():
-    return render_template('show.html')
+    return render_template('pun_show.html')
 
 
 @wechat_bp.route('/')
