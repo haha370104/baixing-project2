@@ -58,7 +58,7 @@
         </form>
         </div>
         </nav>
-        <div id="main" class="container-fluid">
+        <div id="mtable" class="container-fluid">
         </div>
         </body>
         </html>
@@ -112,12 +112,26 @@
         })
     });
 
+    $("#add_meeting").click(function () {
+        $("#assembly").parent().removeClass("active");
+        $("#late").parent().removeClass("active");
+        $("#booking").parent().removeClass("active");
+        $("#add_meeting").parent().addClass("active");
+        $.ajax({
+            url: "add_meeting.html",
+            type: "POST",
+            success: function (msg) {
+                $("#mtable").empty();
+                $("#mtable").append(msg);
+            }
+        })
+    });
 
 
     function tableClear() {
-        $("#main").empty();
-        $("#main").append('<a href="#" id="add_meeting"><input type="button" class="btn btn-sm btn-success" style="width: 10%;font-size: large;float:right;" value="新增会议"/></a>');
-        $("#main").append("<table id=\'table\' class=\'table table-striped\'></table>");
+        $("#mtable").empty();
+        $("#mtable").append('<a href="#" id="add_meeting"><input type="button" class="btn btn-sm btn-success" style="width: 10%;font-size: large;float:right;" value="新增会议" /> </a>');
+        $("#mtable").append("<table id=\'table\' class=\'table table-striped\'></table>");
         $("table").append("<thead><tr></tr></thead><tbody></tbody>");
     }
 
