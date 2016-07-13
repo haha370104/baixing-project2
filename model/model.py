@@ -75,10 +75,13 @@ class meeting(Base):
     screen_ID = db.Column(db.Integer, unique=True)
 
     def get_ticket(self):
-        if check_ticket(self.ticket):
+        if wechat_tools.check_ticket(self.ticket):
             return self.ticket
         else:
-            self.ticket = get_ticket(1800, self.screen_ID)  # 需要调试
+            start = self.start_time.timetuple()
+            end = self.end_time.timetuple()
+            seconds=(end.tm_hour-start.tm_hour)*3600+(end.tm_min-start.tm_min)*60+(end.tm_sec-start.tm_sec)
+            self.ticket = wechat_tools.get_ticket(seconds, self.screen_ID)  # 需要调试
             db.session.commit()
             return self.ticket
 
@@ -158,9 +161,17 @@ class signin_history(Base):
     happen_date = db.Column(db.Date, nullable=False)
     user_ID = db.Column(db.Integer, nullable=False, index=True)
     meeting_ID = db.Column(db.Integer, nullable=False, index=True)
+    late_flag = db.Column(db.Boolean, nullable=False)
 
-    def __init__(self, user_ID, meeting_ID):
+    def __init__(self, user_ID, meeting_ID, late_flag):
         self.user_ID = user_ID
         self.meeting_ID = meeting_ID
         self.sign_time = datetime.datetime.now().time()
         self.happen_date = datetime.datetime.now().date()
+        self.late_flag = late_flag
+
+    def to_json(self):
+        dic = {}
+        dic['name'] = user.query.get(self.user_ID).user_name
+        dic['flag'] = self.late_flag
+        return dic

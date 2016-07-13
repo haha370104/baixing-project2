@@ -36,7 +36,20 @@ def show_meeting():
 def get_meeting_QR(meeting_ID):
     m = meeting.query.get(meeting_ID)
     ticket = m.get_ticket()
-    return '<img src="{0}">'.format(get_QR_url(ticket))
+    image_url = wechat_tools.get_QR_url(ticket)
+    return render_template('qrcode.html', image_url=image_url)
+
+
+@app.route('/get_signin_list/<int:meeting_ID>/')
+def get_signin_list(meeting_ID):
+    historys = signin_history.query.filter(and_(signin_history.happen_date == datetime.datetime.now().date(),
+                                                signin_history.meeting_ID == meeting_ID)).all()
+    result = []
+    for history in historys:
+        result.append(history.to_json())
+        db.session.delete(history)
+    db.session.commit()
+    return json.dumps(result)
 
 
 if __name__ == '__main__':
