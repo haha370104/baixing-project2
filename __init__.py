@@ -3,7 +3,7 @@ from controller import blue_prints
 from model.model import *
 from sqlalchemy import and_, or_
 import datetime
-from flask import render_template
+from flask import render_template, request, redirect, url_for
 
 for bp in blue_prints:
     app.register_blueprint(bp[0], url_prefix=bp[1])
@@ -35,16 +35,21 @@ def show_meeting():
 @app.route('/get_QR_image/<int:meeting_ID>/')
 def get_meeting_QR(meeting_ID):
     m = meeting.query.get(meeting_ID)
-    ticket = m.get_ticket()
-    image_url = wechat_tools.get_QR_url(ticket)
-    return render_template('qrcode.html', image_url=image_url)
+    if m.check_legal():
+        ticket = m.get_ticket()
+        image_url = wechat_tools.get_QR_url(ticket)
+        return render_template('qrcode.html', image_url=image_url)
+    else:
+        return redirect(url_for('show_meeting'))
 
 
 @app.route('/get_signin_list/<int:meeting_ID>/')
 def get_signin_list(meeting_ID):
+    flag = (request.values.get('flag') == '1')
+
     historys = signin_history.query.filter(and_(signin_history.happen_date == datetime.datetime.now().date(),
                                                 signin_history.meeting_ID == meeting_ID,
-                                                signin_history.delete_flag)).all()
+                                                signin_history.delete_flag == flag)).all()
     result = []
     for history in historys:
         result.append(history.to_json())
