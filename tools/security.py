@@ -23,3 +23,7 @@ def check_signature(token, time, nonce, signature):
         return True
     else:
         return False
+
+
+def md5(s):
+    return hashlib.md5(s.encode('ascii')).hexdigest()

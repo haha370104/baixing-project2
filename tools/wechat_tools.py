@@ -1,7 +1,9 @@
 import requests
 import json
+from secret_config import appid, appsecret
+import time
 
-token = 'kqxZN_SKyOmkqTvJlwauIxpYnZHzjAjr3uOaWFS1IqtbUmJQSThp8li-AfLuyxEfm3jyd9ZbDLSab04YakkuPvE4V3-ZH3bjKHw_Lj4lE8YSDGjAAANYB'
+token = 'ln_7JSFwckYcgExMHrwgGHGAMc4JMKsjiaZlxD99qSTiO5qHddKz7ozryaw1a8d2Jmz_bj7fRmsokhouW1QjmHBhxpx83lKbQGHgAxgfqEHCNdbH8CedEEJHV2F738EYWQTcAEAKEH'
 
 
 class MyError(Exception):
@@ -22,5 +24,37 @@ def get_ticket(second, scene_id):
         raise MyError('创建ticket出错')
 
 
-def get_QR_image(ticket):
+def check_ticket(ticket):
+    if ticket == None:
+        return False
+    r = requests.get(get_QR_url(ticket))
+    if r.status_code == 200:
+        return True
+    else:
+        return False
+
+
+def get_openID_by_code(code):
+    r = requests.get(
+        'https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code'.format(
+            appid, appsecret, code))
+    j = json.loads(r.text)
+    open_ID = j.get('openid')
+    return open_ID
+
+
+def get_QR_url(ticket):
     return 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' + ticket
+
+
+def get_reply_xml(open_ID, dev_user, content):
+    xml = '''
+        <xml>
+            <ToUserName><![CDATA[{0}]]></ToUserName>
+            <FromUserName><![CDATA[{1}]]></FromUserName>
+            <CreateTime>{2}</CreateTime>
+            <MsgType><![CDATA[text]]></MsgType>
+            <Content><![CDATA[{3}]]></Content>
+        </xml>
+    '''.format(open_ID, dev_user, str(int(time.time())), content)
+    return xml
