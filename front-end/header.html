@@ -58,7 +58,7 @@
         </form>
         </div>
         </nav>
-        <div id="mtable" class="container-fluid">
+        <div id="main" class="container-fluid">
         </div>
         </body>
         </html>
@@ -121,17 +121,17 @@
             url: "add_meeting.html",
             type: "POST",
             success: function (msg) {
-                $("#mtable").empty();
-                $("#mtable").append(msg);
+                $("#main").empty();
+                $("#main").append(msg);
             }
         })
     });
 
 
     function tableClear() {
-        $("#mtable").empty();
-        $("#mtable").append('<a href="#" id="add_meeting"><input type="button" class="btn btn-sm btn-success" style="width: 10%;font-size: large;float:right;" value="新增会议" /> </a>');
-        $("#mtable").append("<table id=\'table\' class=\'table table-striped\'></table>");
+        $("#main").empty();
+        $("#main").append('<a href="#" id="add_meeting"><input type="button" class="btn btn-sm btn-success" style="width: 10%;font-size: large;float:right;" value="新增会议" /> </a>');
+        $("#main").append("<table id=\'table\' class=\'table table-striped\'></table>");
         $("table").append("<thead><tr></tr></thead><tbody></tbody>");
     }
 
