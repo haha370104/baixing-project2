@@ -164,6 +164,37 @@ def confirm_fine():
     return '成功'
 
 
+@wechat_bp.route('/spend_money/')
+def spend_money():
+    code = request.values.get('code')
+    open_ID = wechat_tools.get_openID_by_code(code)
+    staff = user.query.filter_by(wechat_ID=open_ID).first()
+    if staff == None:
+        return '非法访问'
+    money = str(float(staff.money))
+    return render_template('wechat/order.html', amount=money, open_ID=open_ID)
+
+
+@wechat_bp.route('/check_expense/', methods=['GET', 'POST'])
+def check_expense():
+    try:
+        remark = request.values.get('remark')
+        price = float(request.values.get('price'))
+        open_ID = request.values.get('open_ID')
+        #print(open_ID)
+        staff = user.query.filter_by(wechat_ID=open_ID).first()
+        if staff.money >= price:
+            e = expenses(price, staff.ID, remark)
+            staff.money = float(staff.money) - price
+            db.session.add(e)
+            db.session.commit()
+            return '订餐成功'
+        else:
+            return '钱不够'
+    except:
+        return '能不能不要捣乱'
+
+
 @wechat_bp.route('/')
 def ind():
     return '121231231233'

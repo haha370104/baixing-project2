@@ -44,7 +44,7 @@ function loadlist() {
                 .append($(document.createElement("td"))
                     .append($(document.createElement("button"))
                         .attr("type", "button")
-                        .addClass("btn btn-sm btn-default")
+                        .addClass("btn btn-sm btn-primary")
                         .text("开始")
                         .click(function () {
 

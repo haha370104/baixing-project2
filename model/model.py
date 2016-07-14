@@ -19,7 +19,7 @@ class ask_leave(Base):
     effective_time = db.Column(db.Date, nullable=False)
 
 
-class expense(Base):
+class expenses(Base):
     __tablename__ = 'expenses'
 
     ID = db.Column(db.Integer, primary_key=True)
@@ -28,7 +28,7 @@ class expense(Base):
     remark = db.Column(db.String(300))
     user_ID = db.Column(db.Integer, nullable=False)
 
-    def __init(self, amount, user_ID, remark):
+    def __init__(self, amount, user_ID, remark):
         self.user_ID = user_ID
         self.amount = amount
         self.remark = remark
