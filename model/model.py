@@ -34,6 +34,14 @@ class expenses(Base):
         self.remark = remark
         self.occur_time = datetime.datetime.now()
 
+    def to_json(self):
+        dic = {}
+        dic['ID'] = self.ID
+        dic['amount'] = float(self.amount)
+        dic['occur_time'] = str(self.occur_time)
+        dic['remark'] = self.remark
+        return dic
+
 
 class fine(Base):
     __tablename__ = 'fine'
@@ -56,9 +64,10 @@ class fine(Base):
     def to_json(self):
         dic = {}
         dic['ID'] = self.ID
-        dic['meeting_ID'] = self.meeting_ID
+        dic['meeting_topic'] = meeting.query.get(self.meeting_ID).meeting_topic
         dic['amount'] = float(self.amount)
         dic['happen_time'] = str(self.happen_time)
+        dic['pay_flag'] = ['未付款', '已付款'][int(self.pay_flag)]
         return dic
 
     def wechat_ajax(self):
@@ -127,17 +136,22 @@ class meeting(Base):
     def to_json(self):
         dic = {}
         dic['ID'] = self.ID
-        dic['routing_flag'] = self.routing_flag
-        dic['start_time'] = str(self.start_time)
-        dic['end_time'] = str(self.end_time)
+        dic['routing_flag'] = ['非常规会议', '常规会议'][int(self.routing_flag)]
+        if self.routing_flag:
+            dic['start_time'] = str(self.start_time.time())
+            dic['end_time'] = str(self.end_time.time())
+        else:
+            dic['start_time'] = str(self.start_time)
+            dic['end_time'] = str(self.end_time)
         dic['pun_rule'] = str(float(self.pun_rule))
         dic['pun_type'] = self.pun_type
         dic['pun_config'] = self.pun_config
         dic['ticket'] = self.get_ticket()
         dic['screen_ID'] = self.screen_ID
+        dic['topic'] = self.meeting_topic
         if self.routing_flag:
-            start_time = dic['start_time'].split(' ')[1]
-            end_time = dic['end_time'].split(' ')[1]
+            start_time = dic['start_time']
+            end_time = dic['end_time']
             dic['text'] = '{0}\n开始时间:{1}\n,结束时间:{2}'.format(self.meeting_topic, start_time, end_time)
         else:
             dic['text'] = '{0}\n开始时间:{1}\n,结束时间:{2}'.format(self.meeting_topic, dic['start_time'], dic['end_time'])
