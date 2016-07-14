@@ -8,17 +8,19 @@ def wechat_check_access(request, session):
     if request.values.get('code'):
         return None
     else:
-        if request.values.get('open_ID') or request.values.get('openid'):
+        if request.values.get('open_ID') or request.values.get('openid') or session.get('open_ID'):
             return None
     return '请从微信访问页面'
 
 
 def wechat_check_register(request, session):
     open_ID = None
-    if 'code' in request.values.keys():
+    if session.get('open_ID'):
+        open_ID = session.get('open_ID')
+    elif 'code' in request.values.keys():
         open_ID = wechat_tools.get_openID_by_code(request.values.get('code'))
         session['open_ID'] = open_ID
-    if 'open_ID' in request.values.keys():
+    elif 'open_ID' in request.values.keys():
         open_ID = request.values.get('open_ID')
     elif 'openid' in request.values.keys():
         open_ID = request.values.get('openid')

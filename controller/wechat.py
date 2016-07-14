@@ -30,6 +30,8 @@ def handle_scan(json, wechat_ID):
     xml = None
     if meet == None:
         xml = wechat_tools.get_reply_xml(json['xml']['FromUserName'], json['xml']['ToUserName'], '非法操作')
+    elif staff == None:
+        xml = wechat_tools.get_reply_xml(json['xml']['FromUserName'], json['xml']['ToUserName'], '请先注册')
     else:
         start_time = meet.get_start_time()
         now = datetime.datetime.now().time()
@@ -67,10 +69,11 @@ def handle_scan(json, wechat_ID):
 
 def handle_weather(json):
     weather_json = get_tomorrow_weather()
-    reply_content = '明天温度{0},{1},风力为{2}'.format(weather_json['temperature'], weather_json['weather'],
-                                                weather_json['wind'])
+    text = ''
+    for day in weather_json:
+        text += '{0}温度{1},{2}\n\n'.format(day['date'], day['temperature'], day['weather'])
     xml = wechat_tools.get_reply_xml(json['xml']['FromUserName'], json['xml']['ToUserName'],
-                                     reply_content)
+                                     text)
     return xml
 
 
