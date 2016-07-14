@@ -20,13 +20,14 @@
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
             <span class="sr-only">Toggle navigation</span>
         </button>
-        <a href="" class="navbar-brand">迟到管理系统</a>
+        <a class="navbar-brand">迟到管理系统</a>
     </div>
     <div class="collapse navbar-collapse" id="navbar-collapse-01">
         <ul class="nav navbar-nav">
             <li class="" id="tab1"><a href="#" id="assembly">会议记录</a></li>
             <li class="" id="tab2"><a href="#" id="late">迟到记录</a></li>
             <li class="" id="tab3"><a href="#" id="booking">订餐记录</a></li>
+            <li class="" id="tab4"><a href="#" id="today_list">今日菜单</a></li>
             <!--li class="" id="tab4"><a href="#" id="add_meeting">添加会议</a></li>-->
         </ul>
         <!--
@@ -58,12 +59,15 @@
         </form>
     </div>
 </nav>
-<div id="main" class="container-fluid">
+<div class="container-fluid">
     <blockquote class="col-xs-6" id="money_left">
-        <p>剩余金额：<strong id="">100</strong> 元</p>
+        <p>剩余金额：<strong id="">{{ amount }}</strong> 元</p>
     </blockquote>
     <input id='add_meeting' type='button' class='btn btn-sm btn-success'
            style='width: 10%;font-size: large;float:right;' value='添加会议'>
+    <div class="container-fluid" id="main">
+
+    </div>
 </div>
 </body>
 </html>

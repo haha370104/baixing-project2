@@ -5,6 +5,11 @@ from tools.security import *
 admin_bp = Blueprint('admin', __name__)
 
 
+@admin_bp.before_request
+def admin_filter():
+    pass
+
+
 @admin_bp.route('/login/')
 def login():
     return render_template('admin/login.html')

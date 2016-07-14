@@ -44,7 +44,6 @@ def handle_scan(json, wechat_ID):
                     amount = eval(meet.pun_config)  # TODO
                 xml = wechat_tools.get_reply_xml(json['xml']['FromUserName'], json['xml']['ToUserName'],
                                                  '大兄弟快交钱,{0}元'.format(str(amount)))
-
                 f = fine(staff.ID, meet.ID, amount)
                 history = signin_history(staff.ID, meet.ID, True)
                 db.session.add(history)
@@ -181,7 +180,6 @@ def check_expense():
         remark = request.values.get('remark')
         price = float(request.values.get('price'))
         open_ID = request.values.get('open_ID')
-        #print(open_ID)
         staff = user.query.filter_by(wechat_ID=open_ID).first()
         if staff.money >= price:
             e = expenses(price, staff.ID, remark)
