@@ -59,8 +59,11 @@
         </div>
         </nav>
         <div id="main" class="container-fluid">
+            <blockquote class="col-xs-6" id="money_left" >
+                <p>剩余金额：<strong id="">100</strong> 元</p>
+            </blockquote>
+            <input id='add_meeting' type='button' class='btn btn-sm btn-success' style='width: 10%;font-size: large;float:right;' value='添加会议'>
         </div>
-        <button id="add_meeting" class="btn btn-sm btn-success" value="submit">aaa</button>
         </body>
         </html>
 
@@ -75,6 +78,7 @@
         $("#assembly").parent().addClass("active");
         $("#late").parent().removeClass("active");
         $("#booking").parent().removeClass("active");
+        $("#add_meeting").show() ;
 
         $.getJSON("assembly.js", function (result) {
             tableClear();
@@ -88,6 +92,7 @@
         $("#assembly").parent().removeClass("active");
         $("#late").parent().addClass("active");
         $("#booking").parent().removeClass("active");
+        $("#add_meeting").hide() ;
 
         $.getJSON("assembly.js", function (result) {
             tableClear();
@@ -101,9 +106,11 @@
         $("#assembly").parent().removeClass("active");
         $("#late").parent().removeClass("active");
         $("#booking").parent().addClass("active");
+        $("#add_meeting").hide() ;
 
         $.getJSON("assembly.js", function (result) {
             tableClear();
+            $("#main").append();
             var head = ["组织者", "日期", "金额"];
             var head_en = ["meeting_creator", "date", "money"];
             show(head, head_en, result);
@@ -125,9 +132,7 @@
     function tableClear() {
         $("#main").empty();
         var str = "";
-        str += "<input id=\'add_meeting\' type=\'button\' class=\'btn btn-sm btn-success\' style=\'width: 10%;font-size: large;float:right;\' value=\'sub\'>";
         str += "<table id=\'table\' class=\'table table-striped\'></table>";
-        alert(str);
         $("#main").html(str);
         $("table").append("<thead><tr></tr></thead><tbody></tbody>");
     }
