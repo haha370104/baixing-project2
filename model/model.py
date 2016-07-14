@@ -26,6 +26,13 @@ class expense(Base):
     amount = db.Column(db.DECIMAL(6, 2), nullable=False)
     occur_time = db.Column(db.DateTime, nullable=False)
     remark = db.Column(db.String(300))
+    user_ID = db.Column(db.Integer, nullable=False)
+
+    def __init(self, amount, user_ID, remark):
+        self.user_ID = user_ID
+        self.amount = amount
+        self.remark = remark
+        self.occur_time = datetime.datetime.now()
 
 
 class fine(Base):
@@ -78,8 +85,9 @@ class meeting(Base):
     pun_config = db.Column(db.String(300))
     ticket = db.Column(db.String(100))
     screen_ID = db.Column(db.Integer, unique=True)
+    meeting_topic = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, routing_flag, start_time, end_time, pun_rule, pun_type, pun_config=None):
+    def __init__(self, routing_flag, start_time, end_time, pun_rule, pun_type, topic, pun_config=None):
         self.routing_flag = routing_flag
         if routing_flag:
             self.start_time = datetime.datetime(1900, 1, 1, start_time.hour, start_time.minute, start_time.second)
@@ -89,6 +97,7 @@ class meeting(Base):
             self.end_time = end_time
         self.pun_rule = pun_rule
         self.pun_type = pun_type
+        self.meeting_topic = topic
         self.pun_config = pun_config
 
     def check_legal(self):
@@ -129,9 +138,9 @@ class meeting(Base):
         if self.routing_flag:
             start_time = dic['start_time'].split(' ')[1]
             end_time = dic['end_time'].split(' ')[1]
-            dic['text'] = '常规会议\n开始时间:{0}\n,结束时间:{1}'.format(start_time, end_time)
+            dic['text'] = '{0}\n开始时间:{1}\n,结束时间:{2}'.format(self.meeting_topic, start_time, end_time)
         else:
-            dic['text'] = '非常规会议\n开始时间:{0}\n,结束时间:{1}'.format(dic['start_time'], dic['end_time'])
+            dic['text'] = '{0}\n开始时间:{1}\n,结束时间:{2}'.format(self.meeting_topic, dic['start_time'], dic['end_time'])
         return dic
 
     def get_start_time(self):
@@ -158,6 +167,10 @@ class money(Base):
     amount = db.Column(db.DECIMAL(7, 2), nullable=False)
     entry_date = db.Column(db.DateTime, nullable=False)
 
+    def __init__(self, amount, flag=1):
+        self.amount = amount * flag
+        self.entry_date = datetime.datetime.now()
+
 
 class user(Base):
     __tablename__ = 'user'
@@ -169,6 +182,7 @@ class user(Base):
     phone = db.Column(db.String(11), unique=True)
     salt = db.Column(db.String(16), nullable=False)
     passwd = db.Column(db.String(32), nullable=False)
+    money = db.Column(db.DECIMAL(8, 2), default=0, nullable=False)
     token = db.Column(db.String(16))
 
     def __init__(self, user_name, email, wechat_ID, phone, passwd):
@@ -178,6 +192,7 @@ class user(Base):
         self.phone = phone
         self.salt = get_salt(16)
         self.passwd = md5(passwd + self.salt)
+        self.money = 0
 
     def check_pwd(self, passwd):
         if self.passwd == md5(passwd + self.salt):

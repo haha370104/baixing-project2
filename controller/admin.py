@@ -41,7 +41,7 @@ def check_login():
 
 @admin_bp.route('/index/')
 def index():
-    pass
+    return render_template('admin/add_meeting.html')
 
 
 @admin_bp.route('/get_staff/')

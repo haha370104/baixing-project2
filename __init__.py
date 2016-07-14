@@ -12,7 +12,7 @@ for bp in blue_prints:
 @app.route('/')
 @app.route('/index/')
 def index():
-    return 'helloworld'
+    return render_template('index.html')
 
 
 @app.route('/get_meeting_list/')

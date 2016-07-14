@@ -6,11 +6,11 @@
     <title>百姓网迟到管理系统</title>
 
     <!-- Loading Bootstrap -->
-    <link href="css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Loading Flat UI -->
-    <link href="css/flat-ui.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="css/header.css">
+    <link href="../../static/css/flat-ui.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../static/css/header.css">
 
 </head>
 <body>
@@ -64,9 +64,9 @@
         </body>
         </html>
 
-<script src="js/vendor/jquery.min.js"></script>
-<script src="js/vendor/respond.min.js"></script>
-<script src="js/flat-ui.min.js"></script>
+<script src="../../static/js/vendor/jquery.min.js"></script>
+<script src="../../static/js/vendor/respond.min.js"></script>
+<script src="../../static/js/flat-ui.min.js"></script>
 <script>
     $(document).ready(function () {
         $("#assembly").trigger("click");
@@ -135,7 +135,7 @@
     function show(head, head_en, result) {
         head.forEach(function (e) {
             $("tr").append("<th>" + e + "</th>");
-        })
+        });
         result["meeting_rec"].forEach(function (e) {
             console.log(e);
             var str = "";

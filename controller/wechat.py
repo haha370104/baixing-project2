@@ -4,6 +4,7 @@ from model.model import *
 from tools.wechat_tools import *
 from tools.security import *
 from sqlalchemy import and_, or_, not_
+from tools.weather_tools import *
 
 wechat_bp = Blueprint('wechat', __name__)
 
@@ -52,6 +53,15 @@ def handle_scan(json, wechat_ID):
     return xml
 
 
+def handle_weather(json):
+    weather_json = get_tomorrow_weather()
+    reply_content = '明天温度{0},{1},风力为{2}'.format(weather_json['temperature'], weather_json['weather'],
+                                                weather_json['wind'])
+    xml = wechat_tools.get_reply_xml(json['xml']['FromUserName'], json['xml']['ToUserName'],
+                                     reply_content)
+    return xml
+
+
 @wechat_bp.route('/wechat_server/', methods=['GET', 'POST'])
 def wechat_server():
     if check_signature('token', request.args.get('timestamp'), request.args.get('nonce'),
@@ -64,9 +74,15 @@ def wechat_server():
             print(json.dumps(dic))
             # 处理逻辑都写在这里
             try:
-                if dic['xml']['Event'] == 'SCAN':
+                # print(dic.get('xml').get('MsgType'))
+                # print(dic.get('xml').get('Content'))
+                if dic.get('xml').get('Event') == 'SCAN':
                     xml = handle_scan(dic, request.values.get('openid'))
                     print(xml)
+                    return xml
+                elif dic.get('xml').get('MsgType') == 'text' and dic.get('xml').get('Content').find('天气') > -1:
+                    print('要天气')
+                    xml = handle_weather(dic)
                     return xml
                 else:
                     return 'success'
@@ -131,6 +147,17 @@ def confirm_fine():
     fine_list = json.loads(data)
     for fine_ID in fine_list:
         f = fine.query.get(fine_ID)
+        happen_date = f.happen_time.date()
+        meeting_ID = f.meeting_ID
+        historys = signin_history.query.filter(
+            and_(signin_history.meeting_ID == meeting_ID, signin_history.happen_date == happen_date,
+                 not_(signin_history.late_flag))).all()
+        if len(historys) == 0:
+            break
+        per_amount = float(f.amount) / len(historys)
+        for history in historys:
+            staff = user.query.get(history.user_ID)
+            staff.money = float(staff.money) + per_amount
         print(f.amount)
         f.check()
     db.session.commit()
