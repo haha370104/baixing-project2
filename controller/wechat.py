@@ -1,12 +1,25 @@
-from flask import render_template, request, Blueprint
+from flask import render_template, request, Blueprint, session
 import xmltodict
 from model.model import *
 from tools.wechat_tools import *
 from tools.security import *
 from sqlalchemy import and_, or_, not_
 from tools.weather_tools import *
+from controller.filter import *
 
 wechat_bp = Blueprint('wechat', __name__)
+
+
+@wechat_bp.before_request
+def admin_filter():
+    path = request.path
+    if path in filter_list.keys():
+        for fun in filter_list[path]:
+            response = fun(request, session)
+            if response != None:
+                return response
+        return None
+    return None
 
 
 def handle_scan(json, wechat_ID):
@@ -92,16 +105,23 @@ def wechat_server():
 
 
 @wechat_bp.route('/register/', methods=['GET', 'POST'])
-def pre_register():
-    code = request.values.get('code')
-    open_ID = wechat_tools.get_openID_by_code(code)
-    return render_template('wechat/register.html', open_ID=open_ID)
+def register():
+    open_ID = session.get('open_ID')
+    staff = user.query.filter(user.wechat_ID == open_ID).first()
+    if staff == None:
+        return render_template('wechat/register.html', open_ID=open_ID)
+    else:
+        return '您已注册,不要重复'
 
 
 @wechat_bp.route('/check_register/', methods=['GET', 'POST'])
 def check_register():
     phone = request.values.get('phone')
+    if not check_phone_num(phone):
+        return '手机号不合法'
     email = request.values.get('email')
+    if not check_email_address(email):
+        return '邮箱不合法'
     username = request.values.get('username')
     password = request.values.get('password')
     open_ID = request.values.get('open_ID')
@@ -113,8 +133,7 @@ def check_register():
 
 @wechat_bp.route('/get_fine/')
 def get_fines():
-    code = request.values.get('code')
-    open_ID = wechat_tools.get_openID_by_code(code)
+    open_ID = session.get('open_ID')
     user_ID = user.query.filter(user.wechat_ID == open_ID).first().ID
     fs = fine.query.filter(and_(fine.user_ID == user_ID, not_(fine.pay_flag))).all()
     result = []
@@ -130,8 +149,7 @@ def show_fine():
 
 @wechat_bp.route('/show_fine_list/')
 def show_fine_list():
-    code = request.values.get('code')
-    open_ID = wechat_tools.get_openID_by_code(code)
+    open_ID = session.get('open_ID')
     staff = user.query.filter_by(wechat_ID=open_ID).first()
     puns = fine.query.filter(and_(fine.user_ID == staff.ID, not_(fine.pay_flag))).all()
     result = []
@@ -165,8 +183,7 @@ def confirm_fine():
 
 @wechat_bp.route('/spend_money/')
 def spend_money():
-    code = request.values.get('code')
-    open_ID = wechat_tools.get_openID_by_code(code)
+    open_ID = session.get('open_ID')
     staff = user.query.filter_by(wechat_ID=open_ID).first()
     if staff == None:
         return '非法访问'
@@ -177,6 +194,10 @@ def spend_money():
 @wechat_bp.route('/check_expense/', methods=['GET', 'POST'])
 def check_expense():
     try:
+        now = datetime.datetime.now().time()
+        ddl = datetime.datetime.strptime('15:00:00', '%H:%M:%S').time()
+        if now > ddl:
+            return '今日订餐截止,明天早来'
         remark = request.values.get('remark')
         price = float(request.values.get('price'))
         open_ID = request.values.get('open_ID')

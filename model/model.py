@@ -42,6 +42,14 @@ class expenses(Base):
         dic['remark'] = self.remark
         return dic
 
+    def to_json_with_username(self):
+        dic = {}
+        dic['ID'] = self.ID
+        dic['user_name'] = user.query.get(self.user_ID).user_name
+        dic['amount'] = float(self.amount)
+        dic['remark'] = self.remark
+        return dic
+
 
 class fine(Base):
     __tablename__ = 'fine'

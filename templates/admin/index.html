@@ -83,6 +83,7 @@
         $("#assembly").parent().addClass("active");
         $("#late").parent().removeClass("active");
         $("#booking").parent().removeClass("active");
+        $("#today_list").parent().removeClass("active");
         $("#add_meeting").show();
 
         $.get('/admin/get_meeting_list/', function (data, status) {
@@ -100,6 +101,7 @@
         $("#assembly").parent().removeClass("active");
         $("#late").parent().addClass("active");
         $("#booking").parent().removeClass("active");
+        $("#today_list").parent().removeClass("active");
         $("#add_meeting").hide();
 
         $.get('/admin/get_fine_list/', function (data, status) {
@@ -117,6 +119,7 @@
         $("#assembly").parent().removeClass("active");
         $("#late").parent().removeClass("active");
         $("#booking").parent().addClass("active");
+        $("#today_list").parent().removeClass("active");
         $("#add_meeting").hide();
 
         $.get('/admin/get_expenses_list/', function (data, status) {
@@ -131,10 +134,28 @@
         })
     });
 
+    $("#today_list").click(function () {
+        $("#assembly").parent().removeClass("active");
+        $("#late").parent().removeClass("active");
+        $("#booking").parent().removeClass("active");
+        $("#today_list").parent().addClass("active");
+        $("#add_meeting").hide();
+        $.get('/admin/get_today_list/', function (data, status) {
+            if (status == 'success') {
+                var result = JSON.parse(data);
+                tableClear();
+                $("#main").append();
+                var head = ["编号", "人员姓名", "订单信息", "金额"];
+                var head_en = ["ID", "user_name", "remark", "amount"];
+                show(head, head_en, result);
+            }
+        })
+    });
+
     $("#add_meeting").click(function () {
         $.ajax({
-            url: "add_meeting.html",
-            type: "POST",
+            url: "/admin/add_meeting/",
+            type: "GET",
             success: function (msg) {
                 $("#main").empty();
                 $("#main").append(msg);
@@ -166,7 +187,7 @@
         })
     }
 
-    $("#search").change(function () {
+    $("#search").keypress(function () {
         str = this.value;
         $("tbody tr").hide();
         $("tr td").each(function () {
@@ -175,4 +196,33 @@
         });
     });
 
+</script>
+<script>
+    function check_date_input() {
+        if ($('#meeting_type').find("option:selected").text() == '常规') {
+            $("#meeting_date_div").hide();
+        } else {
+            $('#meeting_date_div').show();
+        }
+    }
+
+    function change_pun_type() {
+        switch ($('#punish_type').find("option:selected").val()) {
+            case "0":
+                $('#fixed_money_div').show();
+                $('#active_money_div').hide();
+                $('#self_design_div').hide();
+                break;
+            case "1":
+                $('#fixed_money_div').hide();
+                $('#active_money_div').show();
+                $('#self_design_div').hide();
+                break;
+            case "2":
+                $('#fixed_money_div').hide();
+                $('#active_money_div').hide();
+                $('#self_design_div').show();
+                break;
+        }
+    }
 </script>

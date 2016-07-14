@@ -67,6 +67,8 @@
                     alert('注册成功!');
                     WeixinJSBridge.invoke('closeWindow', {}, function (res) {
                     });
+                } else {
+                    alert(data);
                 }
             })
         } else {

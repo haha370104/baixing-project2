@@ -1,7 +1,7 @@
 from app_config import app, port
 from controller import blue_prints
 from model.model import *
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, not_
 import datetime
 from flask import render_template, request, redirect, url_for
 
@@ -18,9 +18,12 @@ def index():
 @app.route('/get_meeting_list/')
 def get_meeting_list():
     now = datetime.datetime.now()
-    n = datetime.datetime(1900, 1, 1, now.hour, now.minute, now.second)
+    one_day = datetime.timedelta(days=1)
+    tomorrow = datetime.datetime.now().date() + one_day
+    now_for_routing = datetime.datetime(1900, 1, 1, now.hour, now.minute, now.second)
     ms = meeting.query.filter(
-        or_(and_(meeting.routing_flag, meeting.start_time > n), meeting.start_time > now)).all()
+        or_(and_(meeting.routing_flag, meeting.start_time > now_for_routing),
+            and_(meeting.start_time >= now, meeting.start_time < tomorrow, not_(meeting.routing_flag)))).all()
     result = []
     for m in ms:
         result.append(m.to_json())

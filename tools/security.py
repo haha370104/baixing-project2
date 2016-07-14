@@ -1,6 +1,7 @@
 import random
 import string
 import hashlib
+import re
 
 
 def get_salt(num):
@@ -27,3 +28,26 @@ def check_signature(token, time, nonce, signature):
 
 def md5(s):
     return hashlib.md5(s.encode('ascii')).hexdigest()
+
+
+def check_phone_num(s):
+    def phonecheck(s):
+        phoneprefix = ['130', '131', '132', '133', '134', '135', '136', '137', '138', '139', '150', '151', '152', '153',
+                       '156', '158', '159', '170', '183', '182', '185', '186', '188', '189']
+        if len(s) != 11:
+            return False
+        else:
+            if s.isdigit():
+                if s[:3] in phoneprefix:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
+
+def check_email_address(email):
+    if len(email) > 7:
+        if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
+            return True
+    return False
