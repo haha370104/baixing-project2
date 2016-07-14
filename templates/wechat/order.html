@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+        <html lang="zh-cmn-Hans">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+            <title>订餐</title>
+            <link rel="stylesheet" href="../../static/css/weui.css"/>
+        </head>
+<body>
+<div class="container" id="container"></div>
+<div class="hd">
+    <h1 class="page_title" style="text-align:center">订餐</h1>
+    <div class="weui_cells weui_cells_form">
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label">名称</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" id="drinkname" type="text" placeholder="请输入菜品/饮品名称"/>
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label">价格</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="number" id="price" placeholder="请输入价格"/>
+            </div>
+        </div>
+    </div>
+    <div class="weui_cells_tips" id="account">
+    </div>
+    <a id="open_ID" style="display: none">{{ open_ID }}</a>
+    <div class="weui_btn_area">
+        <a class="weui_btn weui_btn_primary" href="javascript:" id="showTooltips" onclick="submit()">确定</a>
+    </div>
+</div>
+
+</body>
+<script src="../../static/js/jquery-3.0.0.min.js"></script>
+<script>
+    var money = 0.0;
+    var open_ID = $('#open_ID').text();
+    $(document).ready(function () {
+        getaccount();
+    });
+    function getaccount() {
+        $.ajax({
+            type: "GET",
+            url: "",
+            dataType: "json",
+            success: function (msg) {
+                msg.forEach(function (e) {
+                    money = e.money;
+                    var str = "您的账户还有 <strong>" + e.money + "</strong> 元";
+                    $("#account").html(str);
+                });
+            }
+        });
+    }
+    function submit() {
+        if ($('#price').val() < money) {
+            var data = {
+                'drinkname': $('#drinkname').val(),
+                'price': $('#price').val(),
+                'open_ID': open_ID
+            };
+            $.post('/wechat/check_register/?open_ID=' + open_ID, data, function (data) {
+                if (data == 'success') {
+                    alert('订餐成功!');
+                    WeixinJSBridge.invoke('closeWindow', {}, function (res) {
+                    });
+                }
+            })
+        } else {
+            alert('订餐失败!请检查账户余额');
+        }
+    }
+</script>
+</html>
