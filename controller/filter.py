@@ -28,22 +28,33 @@ def wechat_check_register(request, session):
     if staff != None:
         return None
     else:
-        return redirect(url_for('wechat.register'))
+        return '''
+        <script>
+            alert('请先注册!');
+            WeixinJSBridge.invoke('closeWindow', {}, function (res) {
+            });
+        </script>
+        '''
 
 
 def admin_check_login(request, session):
     token = request.cookies.get('token')
     if token == None:
         return redirect(url_for('admin.login'))
-    if session.get('user_ID') == None:
+    else:
         staff = user.query.filter(user.token == token).first()
         if staff == None:
             return redirect(url_for('admin.login'))
         else:
-            session['user_ID'] = staff.ID
-            return None
-    else:
-        return None
+            if session.get('user_ID') == None:
+                staff = user.query.filter(user.token == token).first()
+                if staff == None:
+                    return redirect(url_for('admin.login'))
+                else:
+                    session['user_ID'] = staff.ID
+                    return None
+            else:
+                return None
 
 
 filter_list = {

@@ -37,29 +37,30 @@
         <label class="col-xs-3 control-label" for="punish_type">惩罚方式 </label>
         <div class="col-xs-9">
             <select class="form-control" name="punish_type" id="punish_type" onchange="change_pun_type()">
-                <option value="0">定额罚款</option>
-                <option value="1">按时罚款</option>
+                <option value="0">按时罚款</option>
+                <option value="1">定额罚款</option>
                 <option value="2">高级设定</option>
             </select>
         </div>
     </div>
-    <div class="form-group" id="fixed_money_div">
-        <label class="col-xs-3 control-label" for="fixed_money">罚款金额</label>
-        <div class="col-xs-9">
-            <input class="form-control" id="fixed_money" name="fixed_money0" type="text" placeholder="大侠饶命">
-        </div>
-    </div>
-    <div class="form-group" id="active_money_div" style="display:none">
+    <div class="form-group" id="active_money_div">
         <label class="col-xs-3 control-label" for="active_money">罚款金额</label>
         <div class="col-xs-7">
-            <input class="form-control" id="active_money" name="fixed_money1" type="text" placeholder="手下留情">
+            <input class="form-control" id="active_money" name="fixed_money0" type="text" placeholder="手下留情">
         </div>
         <label class="col-xs-2 control-label text-left">元/分钟</label>
+    </div>
+    <div class="form-group" id="fixed_money_div" style="display:none">
+        <label class="col-xs-3 control-label" for="fixed_money">罚款金额</label>
+        <div class="col-xs-9">
+            <input class="form-control" id="fixed_money" name="fixed_money1" type="text" placeholder="大侠饶命">
+        </div>
     </div>
     <div class="form-group" id="self_design_div" style="display:none">
         <label class="col-xs-3 control-label" for="self_design">我来设计</label>
         <div class="col-xs-9">
-            <textarea class="form-control" name="self_design" id="self_design" cols="30" rows="7"></textarea>
+            <textarea class="form-control" name="self_design" id="self_design" cols="30" rows="7"
+                      placeholder="例如lambda minutes: 3.5 * minutes + 10"></textarea>
         </div>
     </div>
 

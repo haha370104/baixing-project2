@@ -119,12 +119,12 @@ class meeting(Base):
 
     def check_legal(self):
         if self.routing_flag:
-            end = self.get_end_time()
+            start = self.get_start_time()
             now = datetime.datetime.now().time()
-            return end >= now
+            return start >= now
         else:
             now = datetime.datetime.now()
-            return self.end_time >= now
+            return self.start_time >= now
         pass
 
     def get_ticket(self):

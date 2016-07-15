@@ -128,6 +128,13 @@ def check_add_meeting():
     if pun_rule != '':
         pun_rule = float(pun_rule)
     pun_config = request.values.get('self_design')
+    if pun_config.find('import') != -1:
+        return '''
+        <script>
+            alert('西方的哪一个国家我没去过,不import够你用');
+            history.back();
+        </script>
+        '''
     meet = meeting(routing_flag, start_time, end_time, pun_rule, pun_type, meeting_topic, pun_config)
     db.session.add(meet)
     db.session.commit()

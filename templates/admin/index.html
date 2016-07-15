@@ -209,13 +209,13 @@
     function change_pun_type() {
         switch ($('#punish_type').find("option:selected").val()) {
             case "0":
-                $('#fixed_money_div').show();
-                $('#active_money_div').hide();
+                $('#fixed_money_div').hide();
+                $('#active_money_div').show();
                 $('#self_design_div').hide();
                 break;
             case "1":
-                $('#fixed_money_div').hide();
-                $('#active_money_div').show();
+                $('#fixed_money_div').show();
+                $('#active_money_div').hide();
                 $('#self_design_div').hide();
                 break;
             case "2":

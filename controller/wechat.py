@@ -56,7 +56,8 @@ def handle_scan(json, wechat_ID):
                 elif meet.pun_type == 1:
                     amount = float(meet.pun_rule)
                 else:
-                    amount = eval(meet.pun_config)  # TODO
+                    fun = eval(meet.pun_config)  # TODO
+                    amount = fun(minutes)
                 xml = wechat_tools.get_reply_xml(json['xml']['FromUserName'], json['xml']['ToUserName'],
                                                  '大兄弟快交钱,{0}元'.format(str(amount)))
                 f = fine(staff.ID, meet.ID, amount)
@@ -72,8 +73,7 @@ def handle_weather(json):
     text = ''
     for day in weather_json:
         text += '{0}温度{1},{2}\n\n'.format(day['date'], day['temperature'], day['weather'])
-    xml = wechat_tools.get_reply_xml(json['xml']['FromUserName'], json['xml']['ToUserName'],
-                                     text)
+    xml = wechat_tools.get_reply_xml(json['xml']['FromUserName'], json['xml']['ToUserName'], text)
     return xml
 
 
@@ -93,10 +93,10 @@ def wechat_server():
                 # print(dic.get('xml').get('Content'))
                 if dic.get('xml').get('Event') == 'SCAN':
                     xml = handle_scan(dic, request.values.get('openid'))
-                    print(xml)
+                    # print(xml)
                     return xml
-                elif dic.get('xml').get('MsgType') == 'text' and dic.get('xml').get('Content').find('天气') > -1:
-                    print('要天气')
+                elif dic.get('xml').get('Event') == 'CLICK' and dic.get('xml').get('EventKey') == 'weather':
+                    # print('要天气')
                     xml = handle_weather(dic)
                     return xml
                 else:
@@ -109,7 +109,8 @@ def wechat_server():
 
 @wechat_bp.route('/register/', methods=['GET', 'POST'])
 def register():
-    open_ID = session.get('open_ID')
+    open_ID = wechat_tools.get_openID_by_code(request.values.get('code'))
+    print(open_ID)
     staff = user.query.filter(user.wechat_ID == open_ID).first()
     if staff == None:
         return render_template('wechat/register.html', open_ID=open_ID)
@@ -205,6 +206,8 @@ def check_expense():
         price = float(request.values.get('price'))
         open_ID = request.values.get('open_ID')
         staff = user.query.filter_by(wechat_ID=open_ID).first()
+        if remark.find('>') != -1 or remark.find('<') != -1:
+            raise MyError('xss')  # 蠢过滤
         if staff.money >= price:
             e = expenses(price, staff.ID, remark)
             staff.money = float(staff.money) - price
